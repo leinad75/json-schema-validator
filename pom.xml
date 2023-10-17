@@ -15,20 +15,21 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!--
   <parent>
     <groupId>com.groupon.api</groupId>
     <artifactId>api-parent-pom</artifactId>
     <version>1.1.1</version>
     <relativePath />
   </parent>
-
+  -->
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.groupon.maven.plugin.json</groupId>
+  <groupId>at.leinad75</groupId>
   <artifactId>json-schema-validator</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Json Schema Validator Maven Plugin</name>
   <description>Maven plugin to validate json files against a json schema</description>
-  <url>https://github.com/groupon/json-schema-validator</url>
+  <url>https://github.com/leinad75/json-schema-validator</url>
   <version>1.2.1-SNAPSHOT</version>
 
   <licenses>
@@ -40,28 +41,8 @@
 
   <developers>
     <developer>
-      <id>gilmarkham</id>
-      <email>gilligan@groupon.com</email>
-      <organization>Groupon</organization>
-      <organizationUrl>http://www.groupon.com</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>namratalele</id>
-      <email>nlele@groupon.com</email>
-      <organization>Groupon</organization>
-      <organizationUrl>http://www.groupon.com</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>villekoskela</id>
-      <email>vkoskela@groupon.com</email>
-      <organization>Groupon</organization>
-      <organizationUrl>http://www.groupon.com</organizationUrl>
+      <id>leinad</id>
+      <email>leinad75@gmx.at</email>
       <roles>
         <role>developer</role>
       </roles>
@@ -76,6 +57,10 @@
   </scm>
 
   <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <java.version>8</java.version>
+
     <!--Dependency versions-->
     <findbugs.annotations.version>3.0.0</findbugs.annotations.version>
     <jackson.version>2.6.2</jackson.version>
@@ -84,7 +69,7 @@
     <maven-plugin-testing-harness.version>1.2</maven-plugin-testing-harness.version>
     <maven-plugin-tools-annotations.version>3.2</maven-plugin-tools-annotations.version>
     <maven-plugin-tools-api.version>3.2</maven-plugin-tools-api.version>
-    <mockito.version>1.10.19</mockito.version>
+    <mockito.version>4.2.0</mockito.version>
     <plexus-component-annotations.version>1.5.5</plexus-component-annotations.version>
     <plexus-resources.version>1.0-alpha-7</plexus-resources.version>
 
