@@ -62,16 +62,16 @@
     <java.version>8</java.version>
 
     <!--Dependency versions-->
-    <findbugs.annotations.version>3.0.0</findbugs.annotations.version>
-    <jackson.version>2.6.2</jackson.version>
+    <findbugs.annotations.version>3.0.1u2</findbugs.annotations.version>
+    <jackson.version>2.15.3</jackson.version>
     <json-schema-validator.version>2.2.6</json-schema-validator.version>
-    <junit.version>4.12</junit.version>
-    <maven-plugin-testing-harness.version>1.2</maven-plugin-testing-harness.version>
-    <maven-plugin-tools-annotations.version>3.2</maven-plugin-tools-annotations.version>
-    <maven-plugin-tools-api.version>3.2</maven-plugin-tools-api.version>
-    <mockito.version>4.2.0</mockito.version>
-    <plexus-component-annotations.version>1.5.5</plexus-component-annotations.version>
-    <plexus-resources.version>1.0-alpha-7</plexus-resources.version>
+    <junit.version>4.13.2</junit.version>
+    <maven-plugin-testing-harness.version>4.0.0-alpha-1</maven-plugin-testing-harness.version>
+    <maven-plugin-tools-annotations.version>3.9.0</maven-plugin-tools-annotations.version>
+    <maven-plugin-tools-api.version>3.9.0</maven-plugin-tools-api.version>
+    <mockito.version>5.6.0</mockito.version>
+    <plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
+    <plexus-resources.version>1.2.0</plexus-resources.version>
 
     <!--Coverage Settings-->
     <jacoco.check.line.coverage>1.0</jacoco.check.line.coverage>
@@ -84,7 +84,7 @@
 
   <build>
     <plugins>
-      <!-- Enable Inherited Plugins -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -129,7 +129,7 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
-
+-->
       <!-- Project Specific Plugins -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -170,21 +170,12 @@
       <version>${json-schema-validator.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-tools-api</artifactId>
-      <version>${maven-plugin-tools-api.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-tools-annotations</artifactId>
       <version>${maven-plugin-tools-annotations.version}</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-component-annotations</artifactId>
@@ -194,6 +185,17 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-resources</artifactId>
       <version>${plexus-resources.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-api</artifactId>
+      <version>1.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
+      <version>3.9.0</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
