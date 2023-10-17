@@ -15,17 +15,18 @@
  */
 package com.groupon.maven.plugin.json;
 
+import com.google.common.io.Files;
+import io.vertx.core.json.DecodeException;
+import io.vertx.core.json.JsonObject;
+import io.vertx.json.schema.JsonSchema;
+import io.vertx.json.schema.JsonSchemaOptions;
+import io.vertx.json.schema.OutputUnit;
+import io.vertx.json.schema.Validator;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -41,7 +42,6 @@ import com.groupon.maven.plugin.json.util.FileUtils;
 /**
  * Default implementation for the ValidatorExecutor.
  *
- * @author Namrata Lele (nlele at groupon dot com)
  * @since 1.0
  */
 @Component(role = ValidatorExecutor.class, hint = "default", instantiationStrategy = "per-lookup")
@@ -98,32 +98,34 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
     }
 
     private void validateAgainstSchema(final String jsonDataFile, final String schemaFile) throws MojoExecutionException, MojoFailureException {
-        final JsonNode schemaResource = loadJson(schemaFile);
-        final JsonNode fileResouce = loadJson(jsonDataFile);
-        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
         try {
-            final JsonSchema schema = factory.getJsonSchema(schemaResource);
-            final ProcessingReport report = schema.validate(fileResouce);
-            if (!report.isSuccess()) {
-                request.getLog().error("File: " + jsonDataFile + " - validation against " + schemaFile + " - Failure");
-                throw new MojoFailureException("Failed to validate JSON from file '" + jsonDataFile + "' - " + report.toString());
-            } else {
-                request.getLog().info("File: " + jsonDataFile + " - validation against " + schemaFile + " - Success");
+            JsonSchema schema = JsonSchema.of(loadJson(schemaFile));
+            JsonObject jsonData = loadJson(jsonDataFile);
+
+            OutputUnit result = Validator.create(schema, new JsonSchemaOptions().setBaseUri("https://localhost"))
+                .validate(jsonData);
+
+            if (!result.getValid()) {
+                throw new MojoFailureException("Failed to validate JSON from file '" + jsonDataFile + "' - " + result);
             }
-        } catch (final ProcessingException e) {
+            request.getLog().info("File: " + jsonDataFile + " - validation against " + schemaFile + " - " + result);
+            System.out.println(result);
+
+        } catch (final Exception e) {
             request.getLog().error(e);
             throw new MojoFailureException(e.getMessage());
         }
     }
 
-    private JsonNode loadJson(final String file) throws MojoExecutionException {
+    private JsonObject loadJson(final String file) throws MojoExecutionException {
         try {
-            final JsonNode node = JsonLoader.fromPath(file);
-            request.getLog().info("File: " + file + " - parsing Json - Success");
+            String data = Files.toString(new File(file), Charset.defaultCharset());
+            final JsonObject node = new JsonObject(data);
+            request.getLog().debug("File: " + file + " - parsing - Success");
             return node;
-        } catch (final IOException io) {
-            request.getLog().error("File: " + file + " - parsing Json - Failure");
-            throw new MojoExecutionException("Failed to parse JSON from file '" + file + "' - " + io.getMessage(), io);
+        } catch (final IOException |DecodeException e) {
+            request.getLog().error("File: " + file + " - parsing - Failure");
+            throw new MojoExecutionException("Failed to parse JSON from file '" + file + "' - " + e.getMessage(), e);
         }
     }
 

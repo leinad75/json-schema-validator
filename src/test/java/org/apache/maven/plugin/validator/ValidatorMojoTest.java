@@ -43,7 +43,23 @@ public class ValidatorMojoTest extends AbstractMojoTestCase {
      * Tests all types of inputs supported by the plugin
      */
     public void testValidatorMojoSuccessCase() {
-        final File testPom = new File(getBasedir(), "src/test/resources/plugin-test-pom-files/pom.xml");
+        performValidatorMojoSuccessCase("pom.xml");
+    }
+
+    public void testValidatorMojoSuccessCaseDraft07() {
+        performValidatorMojoSuccessCase("draft07-pom.xml");
+    }
+
+    public void testValidatorMojoSuccessCase201909() {
+        performValidatorMojoSuccessCase("2019-09-pom.xml");
+    }
+
+    public void testValidatorMojoSuccessCase202012() {
+        performValidatorMojoSuccessCase("2020-12-pom.xml");
+    }
+
+    private void performValidatorMojoSuccessCase(String pomFile) {
+        final File testPom = new File(getBasedir(), "src/test/resources/plugin-test-pom-files/" + pomFile);
         assertNotNull(testPom);
         assertTrue(testPom.exists());
         try {

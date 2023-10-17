@@ -1,7 +1,7 @@
 json-schema-validator
 =====================
 
-<a href="https://raw.githubusercontent.com/groupon/json-schema-validator/master/LICENSE">
+<a href="https://raw.githubusercontent.com/leinad75/json-schema-validator/master/LICENSE">
     <img src="https://img.shields.io/hexpm/l/plug.svg"
          alt="License: Apache 2">
 </a>
@@ -9,23 +9,23 @@ json-schema-validator
     <img src="https://travis-ci.org/groupon/json-schema-validator.png"
          alt="Travis Build">
 </a>
-<a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.groupon.maven.plugin.json%22%20a%3A%22json-schema-validator%22">
-    <img src="https://img.shields.io/maven-central/v/com.groupon.maven.plugin.json/json-schema-validator.svg"
+<a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22at.leinad.maven.plugin.json%22%20a%3A%22json-schema-validator%22">
+    <img src="https://img.shields.io/maven-central/v/at.leinad.maven.plugin.json/json-schema-validator.svg"
          alt="Maven Artifact">
 </a>
 
-Maven plugin to validate json files against a json schema. Uses https://github.com/fge/json-schema-validator library under the covers.
+Maven plugin to validate json files against a json schema. Uses https://github.com/eclipse-vertx/vertx-json-schema library under the covers.
 
 Usage
 -----
 
-Determine the latest version of the validator in [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.groupon.maven.plugin.json%22%20a%3A%22json-schema-validator%22).
+Determine the latest version of the validator in [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22at.leinad.maven.plugin.json%22%20a%3A%22json-schema-validator%22).
 
 Add the plugin to your pom either in the __plugins__ or __pluginManagement__ block:
 
 ```xml
 <plugin>
-    <groupId>com.groupon.maven.plugin.json</groupId>
+    <groupId>at.leinad.maven.plugin.json</groupId>
     <artifactId>json-schema-validator</artifactId>
     <version>VERSION</version>
 </plugin>
@@ -36,7 +36,7 @@ Configure one or more __validation__ blocks for the plugin in the __plugins__ bl
 ```xml
 <plugin>
     <artifactId>json-schema-validator</artifactId>
-    <groupId>com.groupon.maven.plugin.json</groupId>
+    <groupId>at.leinad.maven.plugin.json</groupId>
     <executions>
         <execution>
             <phase>verify</phase>
@@ -83,4 +83,3 @@ License
 
 Published under Apache Software License 2.0, see LICENSE
 
-&copy; Groupon Inc., 2014

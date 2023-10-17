@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2015 Groupon.com
+  ~ Copyright 2014 Groupon.com
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -40,7 +40,18 @@
                 <configuration>
                     <validations>
                         <validation>
-                            <directory>${basedir}/src/test/resources/input-txt-files</directory>
+                            <directory>${basedir}/src/test/resources/input-json-files</directory>
+                            <jsonSchema>${basedir}/src/test/resources/input-schema-files/data-draft07.schema</jsonSchema>
+                            <includes>
+                                <include>**/*.json</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*invalid_data.json</exclude>
+                            </excludes>
+                        </validation>
+                        <validation>
+                            <jsonSchema>${basedir}/src/test/resources/input-schema-files/data-draft07.schema</jsonSchema>
+                            <jsonFile>${basedir}/src/test/resources/input-json-files/data.json</jsonFile>
                         </validation>
                     </validations>
                 </configuration>

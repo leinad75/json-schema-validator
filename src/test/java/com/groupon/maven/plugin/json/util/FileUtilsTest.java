@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -39,7 +38,6 @@ import com.groupon.maven.plugin.json.Validation;
 public class FileUtilsTest {
 
     @Test(expected = MojoExecutionException.class)
-    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     public void testGetListOfFilesDirectoryDoesNotExist() throws MojoExecutionException {
         final String directory = "/directory/does/not/exist";
         final Validation validation = new Validation();
@@ -92,7 +90,6 @@ public class FileUtilsTest {
     }
 
     @Test
-    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     public void testLocateInputFile() throws ResourceNotFoundException, FileResourceCreationException, MojoExecutionException {
         final String resource = "/some/resource";
         final ResourceManager resourceManager = Mockito.mock(ResourceManager.class);
@@ -102,7 +99,6 @@ public class FileUtilsTest {
     }
 
     @Test(expected = MojoExecutionException.class)
-    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     public void testLocateInputFileFailure() throws ResourceNotFoundException, FileResourceCreationException, MojoExecutionException {
         final String resource = "/some/resource";
         final ResourceManager resourceManager = Mockito.mock(ResourceManager.class);
