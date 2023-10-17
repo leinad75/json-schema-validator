@@ -46,15 +46,13 @@ public final class FileUtils {
             includes = StringUtils.join(validation.getIncludes().iterator(), ",");
         }
         try {
-            @SuppressWarnings("unchecked")
-            final List<String> files = (List<String>) org.codehaus.plexus.util.FileUtils.getFileNames(
+            return org.codehaus.plexus.util.FileUtils.getFileNames(
                     directory,
                     includes,
                     StringUtils.join(
                             validation.getExcludes().iterator(),
                             ","),
                     true);
-            return files;
         } catch (final IllegalStateException | IOException e) {
             throw new MojoExecutionException(
                     String.format(

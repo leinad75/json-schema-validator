@@ -15,16 +15,18 @@
  */
 package com.groupon.maven.plugin.json;
 
-import com.google.common.io.Files;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.json.schema.JsonSchema;
 import io.vertx.json.schema.JsonSchemaOptions;
+import io.vertx.json.schema.OutputFormat;
 import io.vertx.json.schema.OutputUnit;
 import io.vertx.json.schema.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,7 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
     }
 
     private void performValidation(final Validation validation) throws MojoExecutionException, MojoFailureException {
-        final List<String> jsonFiles = new ArrayList<String>();
+        final List<String> jsonFiles = new ArrayList<>();
         String schemaFile = null;
 
         if (!StringUtils.isEmpty(validation.getDirectory())) {
@@ -86,7 +88,7 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             }
         }
 
-        if (exceptions.size() > 0) {
+        if (!exceptions.isEmpty()) {
             request.getLog().error("Failed validating json files, " + exceptions.size() + " failures");
             for (Exception e : exceptions) {
                 request.getLog().error(e.getMessage());
@@ -98,18 +100,20 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
     }
 
     private void validateAgainstSchema(final String jsonDataFile, final String schemaFile) throws MojoExecutionException, MojoFailureException {
+        request.getLog().debug("File: " + jsonDataFile + " - validating against " + schemaFile);
+
         try {
             JsonSchema schema = JsonSchema.of(loadJson(schemaFile));
             JsonObject jsonData = loadJson(jsonDataFile);
 
-            OutputUnit result = Validator.create(schema, new JsonSchemaOptions().setBaseUri("https://localhost"))
+            OutputUnit result = Validator.create(schema, new JsonSchemaOptions().setOutputFormat(OutputFormat.Basic).setBaseUri("https://localhost"))
                 .validate(jsonData);
 
             if (!result.getValid()) {
-                throw new MojoFailureException("Failed to validate JSON from file '" + jsonDataFile + "' - " + result);
+                request.getLog().debug(result.toString());
+                throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + result.getErrors());
             }
-            request.getLog().info("File: " + jsonDataFile + " - validation against " + schemaFile + " - " + result);
-            System.out.println(result);
+            request.getLog().info("File: " + jsonDataFile + " - validated - Success");
 
         } catch (final Exception e) {
             request.getLog().error(e);
@@ -119,13 +123,13 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
 
     private JsonObject loadJson(final String file) throws MojoExecutionException {
         try {
-            String data = Files.toString(new File(file), Charset.defaultCharset());
+            String data = new String(Files.readAllBytes(Paths.get(file)), Charset.defaultCharset());
             final JsonObject node = new JsonObject(data);
             request.getLog().debug("File: " + file + " - parsing - Success");
             return node;
         } catch (final IOException |DecodeException e) {
             request.getLog().error("File: " + file + " - parsing - Failure");
-            throw new MojoExecutionException("Failed to parse JSON from file '" + file + "' - " + e.getMessage(), e);
+            throw new MojoExecutionException("Failed to parse JSON from file " + file + " - " + e.getMessage(), e);
         }
     }
 
