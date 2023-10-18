@@ -23,7 +23,7 @@
   <name>Json Schema Validator Maven Plugin</name>
   <description>Maven plugin to validate json files against a json schema</description>
   <url>https://github.com/leinad75/json-schema-validator</url>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <licenses>
     <license>
@@ -56,9 +56,6 @@
     <java.version>8</java.version>
 
     <!--Dependency versions-->
-    <findbugs.annotations.version>3.0.1u2</findbugs.annotations.version>
-    <jackson.version>2.15.3</jackson.version>
-    <json-schema-validator.version>2.2.6</json-schema-validator.version>
     <junit.version>4.13.2</junit.version>
     <maven-plugin-testing-harness.version>4.0.0-alpha-1</maven-plugin-testing-harness.version>
     <maven-plugins.version>3.9.0</maven-plugins.version>
@@ -67,13 +64,8 @@
     <plexus-component-annotations.version>2.1.1</plexus-component-annotations.version>
     <plexus-resources.version>1.2.0</plexus-resources.version>
     <vertx.version>4.4.6</vertx.version>
-
-    <!--Coverage Settings-->
-    <jacoco.check.line.coverage>1.0</jacoco.check.line.coverage>
-    <jacoco.check.branch.coverage>1.0</jacoco.check.branch.coverage>
-
-    <!--Plugin versions-->
     <plexus-component-metadata.version>1.5.5</plexus-component-metadata.version>
+    <nexus-url>https://s01.oss.sonatype.org</nexus-url>
   </properties>
 
   <build>
@@ -136,6 +128,17 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.13</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>${nexus-url}</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -174,11 +177,11 @@
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+      <url>${nexus-url}/content/repositories/snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <url>${nexus-url}/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
 
