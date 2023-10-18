@@ -5,11 +5,7 @@ json-schema-validator
     <img src="https://img.shields.io/hexpm/l/plug.svg"
          alt="License: Apache 2">
 </a>
-<a href="https://travis-ci.org/groupon/json-schema-validator/">
-    <img src="https://travis-ci.org/groupon/json-schema-validator.png"
-         alt="Travis Build">
-</a>
-<a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22at.leinad.maven.plugin.json%22%20a%3A%22json-schema-validator%22">
+<a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.leinad75%22%20a%3A%22json-schema-validator%22">
     <img src="https://img.shields.io/maven-central/v/at.leinad.maven.plugin.json/json-schema-validator.svg"
          alt="Maven Artifact">
 </a>
@@ -19,7 +15,7 @@ Maven plugin to validate json files against a json schema. Uses https://github.c
 Usage
 -----
 
-Determine the latest version of the validator in [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22at.leinad.maven.plugin.json%22%20a%3A%22json-schema-validator%22).
+Determine the latest version of the validator in [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.leinad75%22%20a%3A%22json-schema-validator%22).
 
 Add the plugin to your pom either in the __plugins__ or __pluginManagement__ block:
 
@@ -35,8 +31,8 @@ Configure one or more __validation__ blocks for the plugin in the __plugins__ bl
 
 ```xml
 <plugin>
+    <groupId>io.github.leinad75</groupId>
     <artifactId>json-schema-validator</artifactId>
-    <groupId>at.leinad.maven.plugin.json</groupId>
     <executions>
         <execution>
             <phase>verify</phase>
