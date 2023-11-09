@@ -16,6 +16,7 @@
 package com.groupon.maven.plugin.json;
 
 import io.vertx.core.json.DecodeException;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.json.schema.JsonSchema;
 import io.vertx.json.schema.JsonSchemaOptions;
@@ -103,8 +104,8 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         request.getLog().debug("File: " + jsonDataFile + " - validating against " + schemaFile);
 
         try {
-            JsonSchema schema = JsonSchema.of(loadJson(schemaFile));
-            JsonObject jsonData = loadJson(jsonDataFile);
+            JsonSchema schema = JsonSchema.of((JsonObject) loadJson(schemaFile));
+            Object jsonData = loadJson(jsonDataFile);
 
             OutputUnit result = Validator.create(schema, new JsonSchemaOptions().setOutputFormat(OutputFormat.Basic).setBaseUri("https://localhost"))
                 .validate(jsonData);
@@ -121,10 +122,10 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         }
     }
 
-    private JsonObject loadJson(final String file) throws MojoExecutionException {
+    private Object loadJson(final String file) throws MojoExecutionException {
         try {
             String data = new String(Files.readAllBytes(Paths.get(file)), Charset.defaultCharset());
-            final JsonObject node = new JsonObject(data);
+            Object node = Json.decodeValue(data);
             request.getLog().debug("File: " + file + " - parsing - Success");
             return node;
         } catch (final IOException |DecodeException e) {
