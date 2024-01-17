@@ -6,7 +6,7 @@ json-schema-validator
          alt="License: Apache 2">
 </a>
 <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.leinad75%22%20a%3A%22json-schema-validator%22">
-    <img src="https://img.shields.io/maven-central/v/at.leinad.maven.plugin.json/json-schema-validator.svg"
+    <img src="https://img.shields.io/maven-central/v/io.github.leinad75/json-schema-validator.svg"
          alt="Maven Artifact">
 </a>
 
@@ -21,7 +21,7 @@ Add the plugin to your pom either in the __plugins__ or __pluginManagement__ blo
 
 ```xml
 <plugin>
-    <groupId>at.leinad.maven.plugin.json</groupId>
+    <groupId>io.github.leinad75</groupId>
     <artifactId>json-schema-validator</artifactId>
     <version>VERSION</version>
 </plugin>
@@ -44,8 +44,8 @@ Configure one or more __validation__ blocks for the plugin in the __plugins__ bl
     <configuration>
         <validations>
             <validation>
+                <jsonSchema>${basedir}/src/test/resources/schema.json</jsonSchema>
                 <directory>${basedir}/src/main/resources/data</directory>
-                <jsonSchema>${basedir}/src/test/resources/data.schema</jsonSchema>
                 <includes>
                     <include>**/*.json</include>
                 </includes>
