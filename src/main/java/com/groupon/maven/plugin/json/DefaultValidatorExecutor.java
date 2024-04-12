@@ -17,7 +17,10 @@ package com.groupon.maven.plugin.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.groupon.maven.plugin.json.util.FileUtils;
+import com.groupon.maven.plugin.json.util.JsonTreeWalker;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.PathType;
@@ -34,7 +37,6 @@ import java.util.Set;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -46,6 +48,7 @@ import org.codehaus.plexus.util.StringUtils;
 @Mojo(name = "json-schema-validator")
 public class DefaultValidatorExecutor implements ValidatorExecutor {
 
+    private static final String PROP_ADDITIONAL_PROPERTIES = "additionalProperties";
     private ValidatorRequest request;
 
     public void executeValidator(final ValidatorRequest requestInput) throws MojoFailureException, MojoExecutionException {
@@ -66,17 +69,19 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         if (!StringUtils.isEmpty(validation.getJsonFile())) {
             jsonFiles.add(validation.getJsonFile());
         }
-        if (!StringUtils.isEmpty(validation.getJsonSchema())) {
-            schemaFile = validation.getJsonSchema();
+        if (jsonFiles.isEmpty()) {
+            request.getLog().warn("No JSON files to validate");
+            return;
         }
+        if (StringUtils.isEmpty(validation.getJsonSchema())) {
+            request.getLog().warn("No schema file file given");
+            return;
+        }
+        schemaFile = validation.getJsonSchema();
         List<Exception> exceptions = new ArrayList<>();
         for (final String jsonFile : jsonFiles) {
             try {
-                if (schemaFile != null) {
-                    validateAgainstSchema(jsonFile, schemaFile);
-                } else {
-                    loadJsonNode(jsonFile);
-                }
+                validateAgainstSchema(jsonFile, schemaFile, validation.isStrict());
             } catch (MojoExecutionException | MojoFailureException e) {
                 exceptions.add(e);
             }
@@ -94,8 +99,8 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
     }
 
 
-    private void validateAgainstSchema(final String jsonDataFile, final String schemaFile) throws MojoExecutionException, MojoFailureException {
-        request.getLog().debug("File: " + jsonDataFile + " - validating against " + schemaFile);
+    private void validateAgainstSchema(final String jsonDataFile, final String schemaFile, boolean isStrict) throws MojoExecutionException, MojoFailureException {
+        request.getLog().debug("File: " + jsonDataFile + " - validating against " + schemaFile + ", isStrict=" + isStrict);
 
         try {
             JsonSchemaFactory jsonSchemaFactory = JsonSchemaFactory.getInstance(VersionFlag.V7, builder ->
@@ -105,19 +110,26 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             config.setPathType(PathType.JSON_POINTER);
 
             JsonNode schemaNode = loadJsonNode(schemaFile);
+            JsonNode schemaNodeSchemaId = schemaNode.get("$schema");
+            String schemaId = schemaNodeSchemaId instanceof TextNode  ? ((TextNode) schemaNodeSchemaId).asText() : SchemaId.V7;
 
             // validate schema against meta schema
-            JsonSchema metaSchema = jsonSchemaFactory.getSchema(SchemaLocation.of(SchemaId.V7), config);
+            JsonSchema metaSchema = jsonSchemaFactory.getSchema(SchemaLocation.of(schemaId), config);
             Set<ValidationMessage> schemaValidationMessages = metaSchema.validate(schemaNode);
             if (!schemaValidationMessages.isEmpty()) {
                 request.getLog().debug(schemaValidationMessages.toString());
                 throw new MojoFailureException("Illegal schema " + schemaFile + ", not a valid schema " + SchemaId.V7);
             }
 
+
             // validate test file against schema
             JsonNode testFileJsonNode = loadJsonNode(jsonDataFile);
+            JsonSchema schema;
+            if (isStrict) {
+                forceAdditionalProperties(schemaNode, false);
+            }
+            schema = jsonSchemaFactory.getSchema(schemaNode, config);
 
-            JsonSchema schema = jsonSchemaFactory.getSchema(schemaNode, config);
             Set<ValidationMessage> validationMessages = schema.validate(testFileJsonNode);
 
             if (!validationMessages.isEmpty()) {
@@ -130,6 +142,21 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             request.getLog().error(e);
             throw new MojoFailureException(e.getMessage());
         }
+    }
+
+    private void forceAdditionalProperties(JsonNode schemaNode, boolean b) {
+        new JsonTreeWalker().walkTree(schemaNode, objectNode -> {
+            JsonNode typeNode = objectNode.get("type");
+            if (typeNode instanceof TextNode && "object".equals(typeNode.asText())) {
+                request.getLog().debug("found schema object: " + objectNode);
+                JsonNode addPropsNode = objectNode.get(PROP_ADDITIONAL_PROPERTIES);
+                // set if no additionalProperties, or if true. don't set if it contains a schema
+                if (addPropsNode == null || BooleanNode.TRUE.equals(addPropsNode)) {
+                    request.getLog().info("disabling additional properties for " + objectNode);
+                    objectNode.set(PROP_ADDITIONAL_PROPERTIES, BooleanNode.FALSE);
+                }
+            }
+        });
     }
 
     private JsonNode loadJsonNode(final String file) throws MojoExecutionException {

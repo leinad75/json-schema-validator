@@ -34,6 +34,7 @@ import org.apache.maven.model.FileSet;
  *     </validation>
  *     <!-- Additional validation rules -->
  *     <validation>
+ *       <strict>true</strict>
  *       <jsonSchema>${project.basedir}/src/main/conf/file.schema</jsonSchema>
  *       <jsonFile>${project.basedir}/src/main/conf/file.json</jsonSchema>
  *     </validation>
@@ -47,6 +48,7 @@ import org.apache.maven.model.FileSet;
 public class Validation extends FileSet {
     private String jsonSchema;
     private String jsonFile;
+    private boolean strict = false;
 
     private static final long serialVersionUID = 1L;
 
@@ -66,8 +68,20 @@ public class Validation extends FileSet {
         jsonFile = jsonFileInput;
     }
 
+    public boolean isStrict() {
+        return strict;
+    }
+
+    public void setStrict(boolean strict) {
+        this.strict = strict;
+    }
+
     @Override
     public String toString() {
-        return "Validation {jsonSchema: " + getJsonSchema() + ", jsonFile: " + getJsonFile() + ", " + super.toString() + "}";
+        return "Validation{" +
+            "jsonSchema='" + jsonSchema + '\'' +
+            ", jsonFile='" + jsonFile + '\'' +
+            ", strict=" + strict +
+            '}';
     }
 }

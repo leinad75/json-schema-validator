@@ -40,6 +40,7 @@
                 <configuration>
                     <validations>
                         <validation>
+                            <jsonSchema>${basedir}/src/test/resources/input-schema-files/data.schema</jsonSchema>
                             <directory>${basedir}/src/test/resources/input-txt-files</directory>
                         </validation>
                     </validations>

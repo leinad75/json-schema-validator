@@ -42,6 +42,7 @@
                         <validation>
                             <jsonSchema>${basedir}/src/test/resources/input-schema-files/data.schema</jsonSchema>
                             <jsonFile>${basedir}/src/test/resources/input-json-files-extra/data-additional-properties.json</jsonFile>
+                            <strict>true</strict>
                         </validation>
                     </validations>
                 </configuration>

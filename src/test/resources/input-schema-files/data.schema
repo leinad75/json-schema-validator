@@ -14,7 +14,7 @@
         }
     },
     "required": [ "/", "swap" ],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "definitions": {
         "mntent": {
             "title": "mntent",
