@@ -1,4 +1,4 @@
-package com.groupon.maven.plugin.json.util;
+package io.github.leinad75.maven.plugin.json.util;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;

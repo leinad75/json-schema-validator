@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.groupon.maven.plugin.json;
+package io.github.leinad75.maven.plugin.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.groupon.maven.plugin.json.util.FileUtils;
-import com.groupon.maven.plugin.json.util.JsonTreeWalker;
+import io.github.leinad75.maven.plugin.json.util.FileUtils;
+import io.github.leinad75.maven.plugin.json.util.JsonTreeWalker;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.PathType;

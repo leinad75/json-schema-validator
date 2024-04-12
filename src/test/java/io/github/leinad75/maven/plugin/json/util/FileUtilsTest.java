@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.groupon.maven.plugin.json.util;
+package io.github.leinad75.maven.plugin.json.util;
 
-import com.groupon.maven.plugin.json.Validation;
+import io.github.leinad75.maven.plugin.json.Validation;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.List;

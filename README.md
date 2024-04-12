@@ -22,7 +22,7 @@ Add the plugin to your pom either in the __plugins__ or __pluginManagement__ blo
 ```xml
 <plugin>
     <groupId>io.github.leinad75</groupId>
-    <artifactId>json-schema-validator</artifactId>
+    <artifactId>json-validator-maven-plugin</artifactId>
     <version>VERSION</version>
 </plugin>
 ```
@@ -32,7 +32,7 @@ Configure one or more __validation__ blocks for the plugin in the __plugins__ bl
 ```xml
 <plugin>
     <groupId>io.github.leinad75</groupId>
-    <artifactId>json-schema-validator</artifactId>
+    <artifactId>json-validator-maven-plugin</artifactId>
     <executions>
         <execution>
             <phase>verify</phase>
@@ -61,16 +61,16 @@ Building
 --------
 
 Prerequisites:
-* [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Maven 3.3.3+](http://maven.apache.org/download.cgi)
+* JDK11
+* Maven 3.3.3+
 
 Building:
 
-    json-schema-validator> mvn verify
+    json-validator-maven-plugin> mvn verify
 
 To use the local version you must first install it locally:
 
-    json-schema-validator> mvn install
+    json-validator-maven-plugin> mvn install
 
 You can determine the version of the local build from the pom file.  Using the local version is intended only for testing or development.
 

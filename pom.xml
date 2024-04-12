@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.leinad75</groupId>
-  <artifactId>json-schema-validator</artifactId>
+  <artifactId>json-validator-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Json Schema Validator Maven Plugin</name>
   <description>Maven plugin to validate json files against a json schema</description>

@@ -19,12 +19,11 @@ import java.io.File;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
-import com.groupon.maven.plugin.json.ValidatorMojo;
+import io.github.leinad75.maven.plugin.json.ValidatorMojo;
 
 /**
  * JSON validatorMojo Test.
