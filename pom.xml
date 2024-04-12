@@ -23,7 +23,7 @@
   <name>Json Schema Validator Maven Plugin</name>
   <description>Maven plugin to validate json files against a json schema</description>
   <url>https://github.com/leinad75/json-schema-validator</url>
-  <version>1.0.2</version>
+  <version>2.0.0</version>
 
   <licenses>
     <license>
@@ -57,7 +57,7 @@
 
     <!--Dependency versions-->
     <junit.version>4.13.2</junit.version>
-    <maven-plugin-testing-harness.version>4.0.0-alpha-1</maven-plugin-testing-harness.version>
+    <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
     <maven-plugins.version>3.9.0</maven-plugins.version>
     <maven-resolver-api.version>1.3.1</maven-resolver-api.version>
     <mockito.version>4.11.0</mockito.version>
@@ -71,6 +71,7 @@
   <build>
     <plugins>
       <!-- Project Specific Plugins -->
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
@@ -78,6 +79,7 @@
         <configuration>
           <goalPrefix>json</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <goalPrefix>json-validator-plugin</goalPrefix>
         </configuration>
         <executions>
           <execution>
@@ -88,6 +90,7 @@
           </execution>
         </executions>
       </plugin>
+      <!--
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
@@ -100,7 +103,7 @@
           </execution>
         </executions>
       </plugin>
-
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -188,32 +191,32 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-json-schema</artifactId>
-      <version>${vertx.version}</version>
+      <groupId>com.networknt</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>1.4.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.ethlo.time</groupId>
+          <artifactId>itu</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>3.6.3</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-tools-annotations</artifactId>
-      <version>${maven-plugins.version}</version>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.6.0</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-annotations</artifactId>
-      <version>${plexus-component-annotations.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-resources</artifactId>
-      <version>${plexus-resources.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-api</artifactId>
-      <version>${maven-resolver-api.version}</version>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>3.9.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -221,6 +224,7 @@
       <version>${maven-plugins.version}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -233,6 +237,13 @@
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--
+    <dependency>
+      <groupId>org.eclipse.sisu</groupId>
+      <artifactId>org.eclipse.sisu.plexus</artifactId>
+      <version>0.3.5</version>
+    </dependency>
+    -->
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>

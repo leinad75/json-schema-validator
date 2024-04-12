@@ -15,20 +15,13 @@
  */
 package com.groupon.maven.plugin.json.util;
 
-import java.io.File;
+import com.groupon.maven.plugin.json.Validation;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceCreationException;
-import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
-
-import com.groupon.maven.plugin.json.Validation;
 
 /**
  * Tests for class <code>FileUtils</code>.
@@ -88,7 +81,7 @@ public class FileUtilsTest {
         final List<String> files = FileUtils.getListOfFiles(validation);
         Assert.assertTrue(files.isEmpty());
     }
-
+/*
     @Test
     public void testLocateInputFile() throws ResourceNotFoundException, FileResourceCreationException, MojoExecutionException {
         final String resource = "/some/resource";
@@ -106,7 +99,7 @@ public class FileUtilsTest {
         Mockito.verifyNoMoreInteractions(resourceManager);
         FileUtils.locateInputFile(resource, resourceManager);
     }
-
+*/
     @Test
     public void testPrivateConstructor() throws Exception {
         final Constructor<FileUtils> constructor = FileUtils.class.getDeclaredConstructor();

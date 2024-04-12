@@ -46,8 +46,7 @@ public class ValidatorMojo extends AbstractMojo {
     @Parameter (defaultValue = "${project}")
     protected MavenProject project;
 
-    @Component(role = ValidatorExecutor.class, hint = "default")
-    protected ValidatorExecutor validatorExecutor;
+    protected ValidatorExecutor validatorExecutor = new DefaultValidatorExecutor();
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         ValidatorRequest req = new ValidatorRequest();

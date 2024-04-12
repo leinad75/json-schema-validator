@@ -15,17 +15,12 @@
  */
 package com.groupon.maven.plugin.json.util;
 
+import com.groupon.maven.plugin.json.Validation;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.resource.ResourceManager;
-import org.codehaus.plexus.resource.loader.FileResourceCreationException;
-import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.StringUtils;
-
-import com.groupon.maven.plugin.json.Validation;
 
 /**
  * Utility class for file handling.
@@ -62,8 +57,9 @@ public final class FileUtils {
                     e);
         }
     }
-
+/*
     public static String locateInputFile(final String inputResource, final ResourceManager inputLocator) throws MojoExecutionException {
+
         try {
             return inputLocator.getResourceAsFile(inputResource).getAbsolutePath();
         } catch (final ResourceNotFoundException | FileResourceCreationException e) {
@@ -73,5 +69,8 @@ public final class FileUtils {
                             inputResource),
                     e);
         }
+
+        return "NOT IMPLEMENTED";
     }
+         */
 }

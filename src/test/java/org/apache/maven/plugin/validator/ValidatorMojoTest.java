@@ -58,6 +58,24 @@ public class ValidatorMojoTest extends AbstractMojoTestCase {
         performValidatorMojoSuccessCase("2020-12-pom.xml");
     }
 
+    /**
+     * Tests invalid json data case
+     */
+    public void testValidatorMojoNoAdditionalPropertiesAllowed() {
+        final File testPom = new File(getBasedir(), "src/test/resources/plugin-test-pom-files/strict-validation-pom.xml");
+        assertNotNull(testPom);
+        assertTrue(testPom.exists());
+        try {
+            final ValidatorMojo mojo = (ValidatorMojo) lookupMojo("validate", testPom);
+            assertNotNull(mojo);
+            mojoSetup(mojo);
+            mojo.execute();
+            fail("Must throw an exception");
+        } catch (final Exception e) {
+            assertEquals(MojoFailureException.class, e.getClass());
+        }
+    }
+
     private void performValidatorMojoSuccessCase(String pomFile) {
         final File testPom = new File(getBasedir(), "src/test/resources/plugin-test-pom-files/" + pomFile);
         assertNotNull(testPom);
@@ -105,7 +123,7 @@ public class ValidatorMojoTest extends AbstractMojoTestCase {
             mojo.execute();
             fail("Must throw an exception");
         } catch (final Exception e) {
-            assertEquals(MojoExecutionException.class, e.getClass());
+            assertEquals(MojoFailureException.class, e.getClass());
         }
     }
 

@@ -40,18 +40,8 @@
                 <configuration>
                     <validations>
                         <validation>
-                            <directory>${basedir}/src/test/resources/input-json-files</directory>
-                            <jsonSchema>${basedir}/src/test/resources/input-schema-files/data-2020-12.schema</jsonSchema>
-                            <includes>
-                                <include>**/*.json</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*invalid_data.json</exclude>
-                            </excludes>
-                        </validation>
-                        <validation>
-                            <jsonSchema>${basedir}/src/test/resources/input-schema-files/data-2020-12.schema</jsonSchema>
-                            <jsonFile>${basedir}/src/test/resources/input-json-files/data.json</jsonFile>
+                            <jsonSchema>${basedir}/src/test/resources/input-schema-files/data.schema</jsonSchema>
+                            <jsonFile>${basedir}/src/test/resources/input-json-files-extra/data-additional-properties.json</jsonFile>
                         </validation>
                     </validations>
                 </configuration>
