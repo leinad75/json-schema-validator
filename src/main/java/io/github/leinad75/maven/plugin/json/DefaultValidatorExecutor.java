@@ -29,6 +29,7 @@ import com.networknt.schema.SchemaLocation;
 import com.networknt.schema.SchemaValidatorsConfig;
 import com.networknt.schema.SpecVersion.VersionFlag;
 import com.networknt.schema.ValidationMessage;
+import io.github.leinad75.maven.plugin.json.util.PrettyPrintIterable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             JsonSchema metaSchema = jsonSchemaFactory.getSchema(SchemaLocation.of(schemaId), config);
             Set<ValidationMessage> schemaValidationMessages = metaSchema.validate(schemaNode);
             if (!schemaValidationMessages.isEmpty()) {
-                request.getLog().debug(schemaValidationMessages.toString());
+                request.getLog().debug(new PrettyPrintIterable(schemaValidationMessages).toString());
                 throw new MojoFailureException("Illegal schema " + schemaFile + ", not a valid schema " + SchemaId.V7);
             }
 
@@ -133,8 +134,9 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             Set<ValidationMessage> validationMessages = schema.validate(testFileJsonNode);
 
             if (!validationMessages.isEmpty()) {
-                request.getLog().debug(validationMessages.toString());
-                throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + validationMessages);
+                PrettyPrintIterable prettyPrintIterable = new PrettyPrintIterable(validationMessages);
+                request.getLog().debug(prettyPrintIterable.toString());
+                throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
             }
             request.getLog().info("File: " + jsonDataFile + " - validated - Success");
 
