@@ -57,20 +57,5 @@ public final class FileUtils {
                     e);
         }
     }
-/*
-    public static String locateInputFile(final String inputResource, final ResourceManager inputLocator) throws MojoExecutionException {
 
-        try {
-            return inputLocator.getResourceAsFile(inputResource).getAbsolutePath();
-        } catch (final ResourceNotFoundException | FileResourceCreationException e) {
-            throw new MojoExecutionException(
-                    String.format(
-                            "Exception while locating input file; file=%s",
-                            inputResource),
-                    e);
-        }
-
-        return "NOT IMPLEMENTED";
-    }
-         */
 }

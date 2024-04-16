@@ -112,29 +112,27 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
 
             JsonNode schemaNode = loadJsonNode(schemaFile);
             JsonNode schemaNodeSchemaId = schemaNode.get("$schema");
-            String schemaId = schemaNodeSchemaId instanceof TextNode  ? ((TextNode) schemaNodeSchemaId).asText() : SchemaId.V7;
+            String schemaId = schemaNodeSchemaId instanceof TextNode  ? schemaNodeSchemaId.asText() : SchemaId.V7;
 
             // validate schema against meta schema
             JsonSchema metaSchema = jsonSchemaFactory.getSchema(SchemaLocation.of(schemaId), config);
             Set<ValidationMessage> schemaValidationMessages = metaSchema.validate(schemaNode);
             if (!schemaValidationMessages.isEmpty()) {
-                request.getLog().debug(new PrettyPrintIterable(schemaValidationMessages).toString());
+                request.getLog().error(new PrettyPrintIterable<>(schemaValidationMessages).toString());
                 throw new MojoFailureException("Illegal schema " + schemaFile + ", not a valid schema " + SchemaId.V7);
             }
 
-
             // validate test file against schema
-            JsonNode testFileJsonNode = loadJsonNode(jsonDataFile);
-            JsonSchema schema;
             if (isStrict) {
-                forceAdditionalProperties(schemaNode, false);
+                forceAdditionalProperties(schemaNode);
             }
-            schema = jsonSchemaFactory.getSchema(schemaNode, config);
+            JsonSchema schema = jsonSchemaFactory.getSchema(schemaNode, config);
 
+            JsonNode testFileJsonNode = loadJsonNode(jsonDataFile);
             Set<ValidationMessage> validationMessages = schema.validate(testFileJsonNode);
 
             if (!validationMessages.isEmpty()) {
-                PrettyPrintIterable prettyPrintIterable = new PrettyPrintIterable(validationMessages);
+                PrettyPrintIterable<ValidationMessage> prettyPrintIterable = new PrettyPrintIterable<>(validationMessages);
                 request.getLog().debug(prettyPrintIterable.toString());
                 throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
             }
@@ -146,15 +144,15 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         }
     }
 
-    private void forceAdditionalProperties(JsonNode schemaNode, boolean b) {
-        new JsonTreeWalker().walkTree(schemaNode, objectNode -> {
+    private void forceAdditionalProperties(JsonNode schemaNode) {
+        new JsonTreeWalker().walkTree(schemaNode, (nodeName, objectNode) -> {
             JsonNode typeNode = objectNode.get("type");
             if (typeNode instanceof TextNode && "object".equals(typeNode.asText())) {
                 request.getLog().debug("found schema object: " + objectNode);
                 JsonNode addPropsNode = objectNode.get(PROP_ADDITIONAL_PROPERTIES);
                 // set if no additionalProperties, or if true. don't set if it contains a schema
                 if (addPropsNode == null || BooleanNode.TRUE.equals(addPropsNode)) {
-                    request.getLog().debug("disabling additional properties for " + objectNode);
+                    request.getLog().debug("disabling additional properties for node " + nodeName);
                     objectNode.set(PROP_ADDITIONAL_PROPERTIES, BooleanNode.FALSE);
                 }
             }
@@ -172,18 +170,4 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         }
     }
 
-    // NOTE: Package private for testing.
-    /* package private */
-    /*
-    static void configureInputLocator(final MavenProject project, final ResourceManager inputLocator) {
-        inputLocator.setOutputDirectory(new File(project.getBuild().getDirectory()));
-
-        MavenProject parent = project;
-        while (parent != null && parent.getFile() != null) {
-            final File dir = parent.getFile().getParentFile();
-            inputLocator.addSearchPath(FileResourceLoader.ID, dir.getAbsolutePath());
-            parent = parent.getParent();
-        }
-        inputLocator.addSearchPath("url", "");
-    }*/
 }

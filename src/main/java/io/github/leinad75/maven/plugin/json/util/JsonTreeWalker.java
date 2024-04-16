@@ -1,23 +1,21 @@
 package io.github.leinad75.maven.plugin.json.util;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.IOException;
-import java.util.function.BiConsumer;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class JsonTreeWalker {
 
-  public void walkTree(JsonNode root, Consumer<ObjectNode> consumer) {
+  public void walkTree(JsonNode root, BiConsumer<String, ObjectNode> consumer) {
     walker(null, root, consumer);
   }
 
-  private void walker(String nodename, JsonNode node, Consumer<ObjectNode> consumer) {
-    String nameToPrint = nodename != null ? nodename : "must_be_root";
+  private void walker(String nodename, JsonNode node, BiConsumer<String, ObjectNode> consumer) {
+    String nameToPrint = nodename != null ? nodename : "ROOT";
     if (node.isObject()) {
-      consumer.accept((ObjectNode) node);
-      node.fields().forEachRemaining(e -> walker(e.getKey(), e.getValue(), consumer));
+      consumer.accept(nameToPrint, (ObjectNode) node);
+      node.fields().forEachRemaining(e -> walker((nodename != null ? nodename : "") + "/" + e.getKey(), e.getValue(), consumer));
     } else if (node.isArray()) {
       node.elements().forEachRemaining(n -> walker("array item of '" + nameToPrint + "'", n, consumer));
     }

@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 
 public class PrettyPrintIterable<T> implements Iterable<T>{
 
-  private final Iterable iterable;
+  private final Iterable<T> iterable;
 
-  public PrettyPrintIterable(Iterable iterable) {
+  public PrettyPrintIterable(Iterable<T> iterable) {
     this.iterable = iterable;
   }
   @Override
