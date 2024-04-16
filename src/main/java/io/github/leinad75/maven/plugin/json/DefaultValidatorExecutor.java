@@ -150,8 +150,8 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             if (typeNode instanceof TextNode && "object".equals(typeNode.asText())) {
                 request.getLog().debug("found schema object: " + objectNode);
                 JsonNode addPropsNode = objectNode.get(PROP_ADDITIONAL_PROPERTIES);
-                // set if no additionalProperties, or if true. don't set if it contains a schema
-                if (addPropsNode == null || BooleanNode.TRUE.equals(addPropsNode)) {
+                // set if no additionalProperties
+                if (addPropsNode == null) {
                     request.getLog().debug("disabling additional properties for node " + nodeName);
                     objectNode.set(PROP_ADDITIONAL_PROPERTIES, BooleanNode.FALSE);
                 }
