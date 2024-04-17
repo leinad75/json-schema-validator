@@ -82,7 +82,7 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         List<Exception> exceptions = new ArrayList<>();
         for (final String jsonFile : jsonFiles) {
             try {
-                validateAgainstSchema(jsonFile, schemaFile, validation.isStrict());
+                validateAgainstSchema(jsonFile, schemaFile, validation.isStrict(), validation.isMetaValidation());
             } catch (MojoExecutionException | MojoFailureException e) {
                 exceptions.add(e);
             }
@@ -100,7 +100,7 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
     }
 
 
-    private void validateAgainstSchema(final String jsonDataFile, final String schemaFile, boolean isStrict) throws MojoExecutionException, MojoFailureException {
+    private void validateAgainstSchema(final String jsonDataFile, final String schemaFile, boolean isStrict, boolean isMetaValidation) throws MojoExecutionException, MojoFailureException {
         request.getLog().debug("File: " + jsonDataFile + " - validating against " + schemaFile + ", isStrict=" + isStrict);
 
         try {
@@ -110,32 +110,50 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             SchemaValidatorsConfig config = new SchemaValidatorsConfig();
             config.setPathType(PathType.JSON_POINTER);
 
-            JsonNode schemaNode = loadJsonNode(schemaFile);
-            JsonNode schemaNodeSchemaId = schemaNode.get("$schema");
-            String schemaId = schemaNodeSchemaId instanceof TextNode  ? schemaNodeSchemaId.asText() : SchemaId.V7;
+            if (isMetaValidation) {
+                JsonNode schemaNode = loadJsonNode(schemaFile);
+                JsonNode schemaNodeSchemaId = schemaNode.get("$schema");
+                String schemaId = schemaNodeSchemaId instanceof TextNode  ? schemaNodeSchemaId.asText() : SchemaId.V7;
 
-            // validate schema against meta schema
-            JsonSchema metaSchema = jsonSchemaFactory.getSchema(SchemaLocation.of(schemaId), config);
-            Set<ValidationMessage> schemaValidationMessages = metaSchema.validate(schemaNode);
-            if (!schemaValidationMessages.isEmpty()) {
-                request.getLog().error(new PrettyPrintIterable<>(schemaValidationMessages).toString());
-                throw new MojoFailureException("Illegal schema " + schemaFile + ", not a valid schema " + SchemaId.V7);
+                // validate schema against meta schema
+                JsonSchema metaSchema = jsonSchemaFactory.getSchema(SchemaLocation.of(schemaId), config);
+                Set<ValidationMessage> schemaValidationMessages = metaSchema.validate(schemaNode);
+                if (!schemaValidationMessages.isEmpty()) {
+                    request.getLog().error(new PrettyPrintIterable<>(schemaValidationMessages).toString());
+                    throw new MojoFailureException("Illegal schema " + schemaFile + ", not a valid schema " + SchemaId.V7);
+                }
             }
-
-            // validate test file against schema
-            if (isStrict) {
-                forceAdditionalProperties(schemaNode);
-            }
-            JsonSchema schema = jsonSchemaFactory.getSchema(schemaNode, config);
 
             JsonNode testFileJsonNode = loadJsonNode(jsonDataFile);
-            Set<ValidationMessage> validationMessages = schema.validate(testFileJsonNode);
+            JsonNode schemaNode = loadJsonNode(schemaFile);
 
-            if (!validationMessages.isEmpty()) {
-                PrettyPrintIterable<ValidationMessage> prettyPrintIterable = new PrettyPrintIterable<>(validationMessages);
-                request.getLog().debug(prettyPrintIterable.toString());
-                throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
+            // do a strict validation to show either warnings or fail
+            JsonNode strictSchemaNode = forceAdditionalProperties(schemaNode);
+
+            JsonSchema strictSchema = jsonSchemaFactory.getSchema(strictSchemaNode, config);
+            Set<ValidationMessage> strictValidationMessages = strictSchema.validate(testFileJsonNode);
+
+            if (!strictValidationMessages.isEmpty()) {
+                PrettyPrintIterable<ValidationMessage> prettyPrintIterable = new PrettyPrintIterable<>(strictValidationMessages);
+                if (isStrict) {
+                    throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
+                } else {
+                    request.getLog().warn(prettyPrintIterable.toString());
+                }
             }
+
+            // default validation in non-strict mode
+            if (!isStrict) {
+                JsonSchema schema = jsonSchemaFactory.getSchema(schemaNode, config);
+                Set<ValidationMessage> defaultValidationMessages = schema.validate(testFileJsonNode);
+                if (!defaultValidationMessages.isEmpty()) {
+                    PrettyPrintIterable<ValidationMessage> prettyPrintIterable = new PrettyPrintIterable<>(defaultValidationMessages);
+                    request.getLog().debug(prettyPrintIterable.toString());
+                    throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
+                }
+            }
+
+
             request.getLog().info("File: " + jsonDataFile + " - validated - Success");
 
         } catch (final Exception e) {
@@ -144,8 +162,9 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         }
     }
 
-    private void forceAdditionalProperties(JsonNode schemaNode) {
-        new JsonTreeWalker().walkTree(schemaNode, (nodeName, objectNode) -> {
+    private JsonNode forceAdditionalProperties(JsonNode schemaNode) {
+        JsonNode clonedSchema = schemaNode.deepCopy();
+        new JsonTreeWalker().walkTree(clonedSchema, (nodeName, objectNode) -> {
             JsonNode typeNode = objectNode.get("type");
             if (typeNode instanceof TextNode && "object".equals(typeNode.asText())) {
                 request.getLog().debug("found schema object: " + objectNode);
@@ -157,6 +176,7 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
                 }
             }
         });
+        return clonedSchema;
     }
 
     private JsonNode loadJsonNode(final String file) throws MojoExecutionException {

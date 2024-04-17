@@ -44,6 +44,8 @@ Configure one or more __validation__ blocks for the plugin in the __plugins__ bl
     <configuration>
         <validations>
             <validation>
+                <strict>false</strict>
+                <metaValidation>false</metaValidation>
                 <jsonSchema>${basedir}/src/test/resources/schema.json</jsonSchema>
                 <directory>${basedir}/src/main/resources/data</directory>
                 <includes>
@@ -56,6 +58,9 @@ Configure one or more __validation__ blocks for the plugin in the __plugins__ bl
 ```
 
 Each __validation__ block specifies the __jsonSchema__ file to validate with as well as the json file(s) to validate from a root __directory__ with standard __includes__ and __excludes__ to select specific file(s).
+
+The configuration option __strict__ (default=false) forces all additionalProperties to false on each node where this property is not set. This allows to detect unknown attributes.
+The configuration option __metaValidation__ (default=true) validates the schema file against the meta schema.
 
 Building
 --------

@@ -49,6 +49,7 @@ public class Validation extends FileSet {
     private String jsonSchema;
     private String jsonFile;
     private boolean strict = false;
+    private boolean metaValidation = true;
 
     private static final long serialVersionUID = 1L;
 
@@ -74,6 +75,14 @@ public class Validation extends FileSet {
 
     public void setStrict(boolean strict) {
         this.strict = strict;
+    }
+
+    public boolean isMetaValidation() {
+        return metaValidation;
+    }
+
+    public void setMetaValidation(boolean metaValidation) {
+        this.metaValidation = metaValidation;
     }
 
     @Override
