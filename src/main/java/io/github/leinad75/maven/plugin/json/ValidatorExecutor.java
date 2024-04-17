@@ -25,5 +25,5 @@ import org.apache.maven.plugin.MojoFailureException;
  * @since 1.0
  */
 public interface ValidatorExecutor {
-    void executeValidator(ValidatorRequest request) throws MojoFailureException, MojoExecutionException;
+    void performValidation() throws MojoFailureException, MojoExecutionException;
 }

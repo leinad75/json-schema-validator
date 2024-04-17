@@ -45,11 +45,13 @@ public class ValidatorMojo extends AbstractMojo {
     @Parameter (defaultValue = "${project}")
     protected MavenProject project;
 
-    protected ValidatorExecutor validatorExecutor = new DefaultValidatorExecutor();
-
     public void execute() throws MojoExecutionException, MojoFailureException {
         ValidatorRequest req = new ValidatorRequest();
         req.setLog(getLog()).setValidations(validations).setProject(project);
-        validatorExecutor.executeValidator(req);
+
+        for (final Validation validation : req.getValidations()) {
+            new DefaultValidatorExecutor(req, validation).performValidation();
+        }
+
     }
 }
