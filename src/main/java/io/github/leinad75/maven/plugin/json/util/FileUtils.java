@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Utility class for file handling.
@@ -38,15 +37,13 @@ public final class FileUtils {
         if (validation.getIncludes().isEmpty()) {
             includes = "**/*";
         } else {
-            includes = StringUtils.join(validation.getIncludes().iterator(), ",");
+            includes = String.join(",", validation.getIncludes());
         }
         try {
             return org.codehaus.plexus.util.FileUtils.getFileNames(
                     directory,
                     includes,
-                    StringUtils.join(
-                            validation.getExcludes().iterator(),
-                            ","),
+                    String.join(",", validation.getExcludes()),
                     true);
         } catch (final IllegalStateException | IOException e) {
             throw new MojoExecutionException(

@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Default implementation for the ValidatorExecutor.
@@ -70,10 +69,10 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
         jsonFiles = new ArrayList<>();
         schemaFile = validation.getJsonSchema();
 
-        if (!StringUtils.isEmpty(validation.getDirectory())) {
+        if (validation.getDirectory() != null && ! validation.getDirectory().isBlank()) {
             jsonFiles.addAll(FileUtils.getListOfFiles(validation));
         }
-        if (!StringUtils.isEmpty(validation.getJsonFile())) {
+        if (validation.getJsonFile() != null && !validation.getJsonFile().isBlank()) {
             jsonFiles.add(validation.getJsonFile());
         }
 
@@ -87,7 +86,7 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             request.getLog().warn("No JSON files to validate");
             return;
         }
-        if (StringUtils.isEmpty(validation.getJsonSchema())) {
+        if (validation.getJsonSchema() == null || validation.getJsonSchema().isBlank()) {
             request.getLog().warn("No schema file file given");
             return;
         }
