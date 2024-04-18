@@ -34,8 +34,11 @@ import io.github.leinad75.maven.plugin.json.util.PrettyPrintIterable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.StringUtils;
@@ -148,13 +151,9 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             JsonSchema strictSchema = jsonSchemaFactory.getSchema(getStrictSchemaNode(), config);
             Set<ValidationMessage> strictValidationMessages = strictSchema.validate(testFileJsonNode);
 
-            if (!strictValidationMessages.isEmpty()) {
+            if (isStrict && !strictValidationMessages.isEmpty()) {
                 PrettyPrintIterable<ValidationMessage> prettyPrintIterable = new PrettyPrintIterable<>(strictValidationMessages);
-                if (isStrict) {
-                    throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
-                } else {
-                    request.getLog().warn(prettyPrintIterable.toString());
-                }
+                throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
             }
 
             // default validation in non-strict mode
@@ -162,6 +161,13 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
                 JsonSchema schema = jsonSchemaFactory.getSchema(schemaNode, config);
                 Set<ValidationMessage> defaultValidationMessages = schema.validate(testFileJsonNode);
                 if (!defaultValidationMessages.isEmpty()) {
+
+                    // log all results from strict validation, which are not errors, as warnings
+                    Collection<ValidationMessage> warningMessages = retainAllValidationMessages(strictValidationMessages, defaultValidationMessages);
+                    if (!warningMessages.isEmpty()) {
+                        request.getLog().warn(new PrettyPrintIterable<>(warningMessages).toString());
+                    }
+
                     PrettyPrintIterable<ValidationMessage> prettyPrintIterable = new PrettyPrintIterable<>(defaultValidationMessages);
                     request.getLog().debug(prettyPrintIterable.toString());
                     throw new MojoFailureException("Failed to validate JSON from file " + jsonDataFile + " against " + schemaFile + ": " + prettyPrintIterable);
@@ -175,6 +181,18 @@ public class DefaultValidatorExecutor implements ValidatorExecutor {
             request.getLog().error(e);
             throw new MojoFailureException(e.getMessage());
         }
+    }
+
+    /**
+     * Returns all elements of {@code strictValidationMessages} which are not contained in {@code defaultValidationMessages}
+     * Workaround because result Sets from validations are not real sets and don't support the retainAll() method.
+     * @see com.networknt.schema.utils.SetView#retainAll(Collection)
+     */
+    private Collection<ValidationMessage> retainAllValidationMessages(Iterable<ValidationMessage> strictValidationMessages,
+        Collection<ValidationMessage> defaultValidationMessages) {
+        return StreamSupport.stream(strictValidationMessages.spliterator(), false)
+                .filter(m -> !defaultValidationMessages.contains(m))
+                    .collect(Collectors.toList());
     }
 
     private synchronized JsonNode getStrictSchemaNode() {

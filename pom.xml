@@ -23,7 +23,7 @@
   <name>Json Schema Validator Maven Plugin</name>
   <description>Maven plugin to validate json files against a json schema</description>
   <url>https://github.com/leinad75/json-schema-validator</url>
-  <version>2.0.6</version>
+  <version>2.0.7</version>
 
   <licenses>
     <license>
